@@ -1,0 +1,2 @@
+# Flutter does not use reflection, so ProGuard rules are minimal
+# You can add custom rules here if needed

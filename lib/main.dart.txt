@@ -1,0 +1,97 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+void main() => runApp(const SoniketeApp());
+
+class SoniketeApp extends StatelessWidget {
+  const SoniketeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Sonikete',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorSchemeSeed: Colors.deepPurple,
+        scaffoldBackgroundColor: const Color(0xff1a120b),
+        textTheme: GoogleFonts.ebGaramondTextTheme(),
+        useMaterial3: true,
+      ),
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final List<String> bandas = [
+    'Rosario de Cádiz',
+    'Tres Caídas de Triana',
+    'Presentación al Pueblo',
+    'Pasión de Linares',
+    'Redención de Córdoba',
+  ];
+
+  late List<bool> favoritos;
+
+  @override
+  void initState() {
+    super.initState();
+    favoritos = List.filled(bandas.length, false);
+    _cargarFavoritos();
+  }
+
+  Future<void> _cargarFavoritos() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      for (int i = 0; i < bandas.length; i++) {
+        favoritos[i] = prefs.getBool('fav_$i') ?? false;
+      }
+    });
+  }
+
+  Future<void> _toggleFav(int i) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() => favoritos[i] = !favoritos[i]);
+    await prefs.setBool('fav_$i', favoritos[i]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Sonikete 🎺'),
+        centerTitle: true,
+        backgroundColor: const Color(0xff1a120b),
+        foregroundColor: Colors.amberAccent,
+      ),
+      body: ListView.builder(
+        itemCount: bandas.length,
+        itemBuilder: (_, i) => ListTile(
+          leading: const Icon(Icons.music_note, color: Colors.amberAccent),
+          title: Text(
+            bandas[i],
+            style: const TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          trailing: IconButton(
+            icon: Icon(
+              favoritos[i] ? Icons.favorite : Icons.favorite_border,
+              color: Colors.amberAccent,
+            ),
+            onPressed: () => _toggleFav(i),
+          ),
+          onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Has pulsado ${bandas[i]}')),
+          ),
+        ),
+      ),
+    );
+  }
+}

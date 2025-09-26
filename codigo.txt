@@ -1,0 +1,15 @@
+sonikete/
+├── android/
+│   ├── app/
+│   │   ├── src/
+│   │   │   └── main/
+│   │   │       └── AndroidManifest.xml
+│   │   ├── build.gradle
+│   │   └── proguard-rules.pro
+├── assets/
+├── lib/
+│   └── main.dart
+├── .github/
+│   └── workflows/
+│       └── build_apk.yml
+└── pubspec.yaml
